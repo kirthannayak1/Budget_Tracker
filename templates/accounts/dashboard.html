@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Welcome {{ user.username }} 👋</h2>
+
+<p style="text-align:center; color:#555;">
+    Daily Waged: 
+    <b style="color:#2f9e44;">
+        {{ user.is_daily_waged }}
+    </b>
+</p>
+
+<div class="link">
+    <a href="{% url 'logout' %}">Logout</a>
+</div>
+
+{% endblock %}

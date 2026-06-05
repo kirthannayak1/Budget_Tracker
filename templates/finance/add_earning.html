@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Leaflet -->
+<head>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+<h2>Add Earning</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="date" name="date" required>
+
+    <input type="text" name="title" placeholder="Title" required>
+
+    <input type="text" name="client_name" placeholder="Client Name" required>
+
+    <!-- LOCATION INPUT -->
+    <label>Location</label>
+    <input type="text" id="location" name="location" placeholder="Enter or select from map">
+
+    <button type="button" onclick="getLocation()">📍 Current Location</button>
+
+    <!-- MAP -->
+    <div id="map" style="height:400px;margin-top:10px;border-radius:10px;"></div>
+
+    <input type="number" step="0.01" name="amount" placeholder="Amount" required>
+
+    <textarea name="description" placeholder="Description"></textarea>
+
+    <button type="submit">Save Earning</button>
+</form>
+
+<script>
+
+let map = L.map('map').setView([13.3409, 74.7421], 12);
+let marker;
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// CLICK ON MAP
+map.on('click', async function(e) {
+
+    let lat = e.latlng.lat;
+    let lng = e.latlng.lng;
+
+    if(marker) map.removeLayer(marker);
+
+    marker = L.marker([lat, lng]).addTo(map);
+
+    try {
+
+        let res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&accept-language=en&lat=${lat}&lon=${lng}`
+        );
+
+        let data = await res.json();
+
+        let place =
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            data.address.suburb ||
+            data.address.state ||
+            "Selected Location";
+
+        document.getElementById("location").value = place;
+
+        marker.bindPopup("📍 " + place).openPopup();
+
+    } catch (err) {
+        document.getElementById("location").value = lat + "," + lng;
+    }
+});
+
+// CURRENT LOCATION BUTTON
+function getLocation() {
+
+    navigator.geolocation.getCurrentPosition(async function(pos) {
+
+        let lat = pos.coords.latitude;
+        let lng = pos.coords.longitude;
+
+        if(marker) map.removeLayer(marker);
+
+        map.setView([lat, lng], 15);
+
+        marker = L.marker([lat, lng]).addTo(map);
+
+        try {
+
+            let res = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&accept-language=en&lat=${lat}&lon=${lng}`
+            );
+
+            let data = await res.json();
+
+            let place =
+                data.address.city ||
+                data.address.town ||
+                data.address.village ||
+                data.address.suburb ||
+                data.address.state ||
+                "Current Location";
+
+            document.getElementById("location").value = place;
+
+            marker.bindPopup("📍 " + place).openPopup();
+
+        } catch (err) {
+            document.getElementById("location").value = lat + "," + lng;
+        }
+
+    }, function() {
+        alert("Location access denied");
+    });
+}
+
+</script>
+
+{% endblock %}

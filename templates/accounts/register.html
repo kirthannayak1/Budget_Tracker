@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Register</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="text" name="username" placeholder="Username" required>
+
+    <input type="email" name="email" placeholder="Email ID" required>
+
+    <select id="dailyWaged"
+        name="is_daily_waged"
+        onchange="toggleSalary()">
+
+    <option value="True">Yes</option>
+    <option value="False">No</option>
+
+</select>
+
+<input type="number"
+       id="salaryBox"
+       name="salary"
+       placeholder="Monthly Salary"
+       style="display:none;">
+
+    <input type="password" name="password1" placeholder="Password" required>
+
+    <input type="password" name="password2" placeholder="Confirm Password" required>
+
+    <button type="submit">Create Account</button>
+</form>
+
+<div class="link">
+    <a href="{% url 'login' %}">Already have an account? Login</a>
+</div>
+
+
+
+{% endblock %}
+<script>
+function toggleSalary() {
+
+    let value =
+        document.getElementById("dailyWaged").value;
+
+    let salaryBox =
+        document.getElementById("salaryBox");
+
+    if(value === "False") {
+        salaryBox.style.display = "block";
+        salaryBox.required = true;
+    }
+    else {
+        salaryBox.style.display = "none";
+        salaryBox.required = false;
+        salaryBox.value = "";
+    }
+}
+</script>

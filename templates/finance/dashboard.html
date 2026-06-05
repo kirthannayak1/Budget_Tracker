@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- TOP BAR -->
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+
+    <h2>Welcome {{ user.username }} 👋</h2>
+
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+
+        <a href="{% url 'add_earning' %}">
+            <button class="nav-btn">+ Add Earning</button>
+        </a>
+
+        <a href="{% url 'add_expense' %}">
+            <button class="nav-btn">+ Add Expense</button>
+        </a>
+
+        <a href="{% url 'logout' %}">
+            <button class="nav-btn" style="background:#dc3545;">
+                Logout
+            </button>
+        </a>
+
+    </div>
+</div>
+
+<hr>
+
+<!-- SUMMARY -->
+<div style="display:flex;gap:15px;flex-wrap:wrap;">
+
+    {% if not user.is_daily_waged %}
+    <div style="flex:1;min-width:200px;background:#e3f2fd;padding:15px;border-radius:10px;">
+        <h3>💼 Salary</h3>
+        <h2>₹{{ salary }}</h2>
+    </div>
+    {% endif %}
+
+    <div style="flex:1;min-width:200px;background:#eaffea;padding:15px;border-radius:10px;">
+        <h3>💰 Earnings</h3>
+        <h2>₹{{ total_earnings }}</h2>
+    </div>
+
+    <div style="flex:1;min-width:200px;background:#ffe3e3;padding:15px;border-radius:10px;">
+        <h3>💸 Expenses</h3>
+        <h2>₹{{ total_expenses }}</h2>
+    </div>
+
+    <div style="flex:1;min-width:200px;background:#fff8db;padding:15px;border-radius:10px;">
+        <h3>🏦 Balance</h3>
+        <h2>₹{{ balance }}</h2>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- FILTER -->
+<form method="GET" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+
+    <label>From:</label>
+    <input type="date" name="from_date" value="{{ from_date }}">
+
+    <label>To:</label>
+    <input type="date" name="to_date" value="{{ to_date }}">
+
+    <button class="nav-btn">Filter</button>
+
+</form>
+
+<br>
+
+<!-- BUTTONS -->
+<button class="nav-btn" type="button" onclick="toggleBreakdown()">📊 Category Breakdown</button>
+<button class="nav-btn" type="button" onclick="toggleAnalysis()">📈 Analysis</button>
+
+<hr>
+
+<!-- EARNINGS -->
+<h3>💰 Earnings</h3>
+
+<table class="data-table green-table">
+    <thead>
+        <tr>
+            <th>#</th><th>Title</th><th>Client</th><th>Location</th><th>Amount</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in earnings %}
+        <tr>
+            <td><center>{{ forloop.counter }}</center></td>
+            <td><center>{{ e.title }}</center></td>
+            <td><center>{{ e.client_name }}</center></td>
+            <td><center>{{ e.location }}</center></td>
+            <td><center>₹{{ e.amount }}</center></td>
+            <td><center>
+                <a href="{% url 'view_earning' e.id %}">👁️</a>
+                <a href="{% url 'edit_earning' e.id %}">✏️</a>
+                <a href="{% url 'delete_earning' e.id %}">🗑️</a>
+           </center>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<!-- EXPENSES -->
+<h3>💸 Expenses</h3>
+
+<table class="data-table red-table">
+    <thead>
+        <tr>
+            <th>#</th><th>Title</th><th>Category</th><th>Location</th><th>Amount</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in expenses %}
+        <tr>
+            <td><center>{{ forloop.counter }}</center></td>
+            <td><center>{{ e.title }}</center></td>
+            <td><center>{{ e.category.name }}</center></td>
+            <td><center>{{ e.location }}</center></td>
+            <td><center>₹{{ e.amount }}</center></td>
+            <td>
+                <center>
+
+                <a href="{% url 'view_expense' e.id %}">👁️</a>
+                <a href="{% url 'edit_expense' e.id %}">✏️</a>
+                <a href="{% url 'delete_expense' e.id %}">🗑️</a>
+                </center>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<!-- CATEGORY -->
+<div id="breakdownSection" style="display:none;">
+    <h3>📊 Category Breakdown</h3>
+
+    <table class="data-table">
+        <thead>
+            <tr><th>Category</th><th>Total</th></tr>
+        </thead>
+        <tbody>
+            {% for k,v in category_summary.items %}
+            <tr>
+                <td>{{ k }}</td>
+                <td>₹{{ v }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<hr>
+
+<!-- ANALYSIS -->
+<div id="analysisSection" style="display:none;">
+
+    <h2>📈 Analysis</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+
+        <div style="background:#ffe3e3;padding:10px;border-radius:10px;">
+            <h4>Max Expense</h4>
+            {% if max_expense %}
+                <p>{{ max_expense.title }} - ₹{{ max_expense.amount }}</p>
+            {% endif %}
+        </div>
+
+        <div style="background:#d3f9d8;padding:10px;border-radius:10px;">
+            <h4>Max Earning</h4>
+            {% if max_earning %}
+                <p>{{ max_earning.title }} - ₹{{ max_earning.amount }}</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <hr>
+<center>
+    <h3>Expense Category Distribution</h3>
+    <div style="width:300px;height:300px;">
+    <canvas id="expensePie"></canvas>
+</div>
+
+<hr>
+
+<h3>Income Distribution (by Title)</h3>
+
+<div style="width:300px;height:300px;">
+    <canvas id="earningPie"></canvas>
+</div>
+
+
+<hr>
+
+<h3>Income vs Expense Trend</h3>
+
+<div style="width:500px;height:300px;">
+    <canvas id="incomeExpenseChart"></canvas>
+</div>
+</center>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+function toggleBreakdown(){
+    let s = document.getElementById("breakdownSection");
+    s.style.display = (s.style.display === "none") ? "block" : "none";
+}
+
+function toggleAnalysis(){
+    let s = document.getElementById("analysisSection");
+    s.style.display = (s.style.display === "none") ? "block" : "none";
+    if(!window.loaded){
+        loadCharts();
+        window.loaded = true;
+    }
+}
+
+function loadCharts(){
+
+    const labels = JSON.parse('{{ expense_labels|escapejs }}');
+    const values = JSON.parse('{{ expense_values|escapejs }}');
+
+    const dates = JSON.parse('{{ chart_dates|escapejs }}');
+    const income = JSON.parse('{{ income_chart|escapejs }}');
+    const expense = JSON.parse('{{ expense_chart|escapejs }}');
+
+    new Chart(document.getElementById("expensePie"), {
+        type: "pie",
+        data: {
+            labels: labels,
+            datasets: [{ data: values }]
+        }
+    });
+
+    new Chart(document.getElementById("incomeExpenseChart"), {
+        type: "bar",
+        data: {
+            labels: dates,
+            datasets: [
+                { label: "Income", data: income },
+                { label: "Expense", data: expense }
+            ]
+        }
+    });
+}
+
+function loadCharts(){
+
+    const labels = JSON.parse('{{ expense_labels|escapejs }}');
+    const values = JSON.parse('{{ expense_values|escapejs }}');
+
+    const dates = JSON.parse('{{ chart_dates|escapejs }}');
+    const income = JSON.parse('{{ income_chart|escapejs }}');
+    const expense = JSON.parse('{{ expense_chart|escapejs }}');
+
+    // NEW: earning pie data
+    const earningLabels = JSON.parse('{{ earning_labels|escapejs }}');
+    const earningValues = JSON.parse('{{ earning_values|escapejs }}');
+
+    // EXPENSE PIE
+    new Chart(document.getElementById("expensePie"), {
+        type: "pie",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values
+            }]
+        }
+    });
+
+    // EARNING PIE (NEW)
+    new Chart(document.getElementById("earningPie"), {
+        type: "pie",
+        data: {
+            labels: earningLabels,
+            datasets: [{
+                data: earningValues
+            }]
+        }
+    });
+
+    // BAR CHART
+    new Chart(document.getElementById("incomeExpenseChart"), {
+        type: "bar",
+        data: {
+            labels: dates,
+            datasets: [
+                { label: "Income", data: income },
+                { label: "Expense", data: expense }
+            ]
+        }
+    });
+}
+
+</script>
+
+{% endblock %}

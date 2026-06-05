@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Budget Tracker</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #fff3e6, #fce8e6);
+        }
+
+        .container {
+    width: 80%;
+    max-width: 1400px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+        /* Card hover effect */
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            text-align: center;
+            color: #800000;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        h2:hover {
+            color: #e85d04;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Input hover/focus effect */
+        input:hover, select:hover {
+            border-color: #e85d04;
+        }
+
+        input:focus, select:focus {
+            border-color: #e85d04;
+            box-shadow: 0 0 8px rgba(232, 93, 4, 0.3);
+            transform: scale(1.02);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #a3430c;
+            font-weight: bold;
+            border: none;
+            color: rgb(0, 0, 0);
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Button hover effect */
+        button:hover {
+            background: #c54902;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(232, 93, 4, 0.3);
+        }
+
+        a {
+            color: #800000;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Link hover effect */
+        a:hover {
+            color: #e85d04;
+            text-decoration: underline;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+        }
+
+        .success {
+            color: green;
+            text-align: center;
+        }
+
+        .nav-btn {
+    padding: 6px 12px 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 6px;
+    margin-bottom: 2px;
+            background: #a3430c;
+       
+    color: rgb(0, 0, 0);
+    transition: 0.2s ease;
+}
+
+/* hover effect */
+.nav-btn:hover {
+    background: #c54902;   /* darker orange */
+    transform: scale(1.05);
+}
+
+/* optional second button style */
+.nav-btn:nth-child(2) {
+    background: #2f9e44;   /* green */
+}
+
+.nav-btn:nth-child(2):hover {
+    background: #1e7e34;
+}
+
+.nav-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 6px;
+    background: #ffa94d;
+    color: white;
+    transition: 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: #e8590c;
+    transform: scale(1.05);
+}
+
+/* TABLE BASE */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.data-table th {
+    background: #f1f1f1;
+}
+
+/* GREEN TABLE (EARNINGS) */
+.green-table tbody tr {
+    background: #eaffea;
+}
+
+/* RED TABLE (EXPENSES) */
+.red-table tbody tr {
+    background: #ffe3e3;
+}
+
+.data-table tbody tr:hover {
+    filter: brightness(0.95);
+}
+
+
+.action-cell {
+    white-space: nowrap;
+    width: 140px;
+    text-align: center;
+}
+
+.action-cell a {
+    text-decoration: none;
+    margin: 0 3px;
+    font-size: 18px;
+}
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-bottom:15px;">
+    <button
+        type="button"
+        class="nav-btn"
+        onclick="history.back()">
+        ← Back
+    </button>
+</div>
+
+<h2>💰 Earning Details</h2>
+
+<div class="card">
+
+    <p><strong>Title:</strong> {{ earning.title }}</p>
+
+    <p><strong>Client Name:</strong> {{ earning.client_name }}</p>
+
+    <p><strong>Location:</strong> {{ earning.location }}</p>
+
+    <p><strong>Amount:</strong> ₹{{ earning.amount }}</p>
+
+    <p><strong>Description:</strong></p>
+
+    <div style="
+        background:#f8f9fa;
+        padding:10px;
+        border-radius:8px;
+        min-height:60px;
+    ">
+        {{ earning.description|default:"No description provided" }}
+    </div>
+
+    <br>
+
+    <p>
+        <strong>Date:</strong>
+        {{ earning.record.date }}
+    </p>
+
+</div>
+
+<br>
+
+<a href="{% url 'edit_earning' earning.id %}">
+    <button>Edit ✏️</button>
+</a>
+
+<a href="{% url 'dashboard' %}">
+    <button>Back ←</button>
+</a>
+
+{% endblock %}

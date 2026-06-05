@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-bottom:15px;">
+    <button
+        type="button"
+        class="nav-btn"
+        onclick="history.back()">
+        ← Back
+    </button>
+</div>
+
+<h2>💸 Expense Details</h2>
+
+<div class="card">
+
+    <p><strong>Title:</strong> {{ expense.title }}</p>
+
+    <p><strong>Category:</strong> {{ expense.category.name }}</p>
+
+    <p><strong>Location:</strong> {{ expense.location }}</p>
+
+    <p><strong>Amount:</strong> ₹{{ expense.amount }}</p>
+
+    <p><strong>Description:</strong></p>
+
+    <div style="
+        background:#f8f9fa;
+        padding:10px;
+        border-radius:8px;
+        min-height:60px;
+    ">
+        {{ expense.description|default:"No description provided" }}
+    </div>
+
+    <br>
+
+    <p>
+        <strong>Date:</strong>
+        {{ expense.record.date }}
+    </p>
+
+</div>
+
+<br>
+
+<a href="{% url 'edit_expense' expense.id %}">
+    <button>Edit ✏️</button>
+</a>
+
+<a href="{% url 'dashboard' %}">
+    <button>Back ←</button>
+</a>
+
+{% endblock %}
